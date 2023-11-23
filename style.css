@@ -1,6 +1,7 @@
 body {
     margin: 0 auto;
-    background-color: rgb(15, 15, 15);
+    
+    background-color: #373737;
     color: whitesmoke;
     max-width: 1200px;
     min-width: 500px;
@@ -8,4 +9,20 @@ body {
     display: flex;
     justify-content: center;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+h5 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+svg {
+    border: solid 4px white;
+}
+
+
+.selected {
+    stroke: white;
+    stroke-width: 2;
+    fill-opacity: 1; 
 }
