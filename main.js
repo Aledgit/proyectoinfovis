@@ -60,21 +60,40 @@ function cargar_datos() {
 
 function mostrar_grafico(data_1){
 
-    var series = d3.stack().keys(["Nf3", "c4", "d4", "e3", "e4"])(Object.values(data_1));
+    var totals = Object.values(data_1).map(function(d) {
+        return d.Nf3 + d.c4 + d.d4 + d.e3 + d.e4;
+    });
 
+    var normalizedData = Object.values(data_1).map(function(d, i) {
+        return {
+            elo_intervalo: Object.keys(data_1)[i],
+            Nf3: (d.Nf3 / totals[i]) * 100,
+            c4: (d.c4 / totals[i]) * 100,
+            d4: (d.d4 / totals[i]) * 100,
+            e3: (d.e3 / totals[i]) * 100,
+            e4: (d.e4 / totals[i]) * 100,
+        };
+        });
+
+    var series = d3.stack()
+        .keys(["Nf3", "c4", "d4", "e3", "e4"])
+        .order(d3.stackOrderNone)
+        .offset(d3.stackOffsetNone)
+        .value(function(d, key) { return d[key]; })(normalizedData);
+    
     var colorScale = d3.scaleOrdinal()
         .domain(["Nf3", "c4", "d4", "e3", "e4"])
         .range(d3.schemeCategory10);
-
+    
     var xScale = d3.scaleBand()
-        .domain(Object.keys(data_1))
+        .domain(normalizedData.map(function(d) { return d.elo_intervalo; }))
         .range([margins_1[0], WIDTH_VIS_1 - margins_1[1]])
-        .padding(0.1);
-
+        .padding(0.5);
+    
     var yScale = d3.scaleLinear()
-        .domain([0, 100])  // Ajusta el dominio según tus datos
+        .domain([0, 100])
         .range([HEIGHT_VIS_1 - margins_1[2], margins_1[3]]);
-
+    
     SVG1.selectAll("g")
         .data(series)
         .enter().append("g")
@@ -82,17 +101,18 @@ function mostrar_grafico(data_1){
         .selectAll("rect")
         .data(function(d) { return d; })
         .enter().append("rect")
-        .attr("x", function(d) { return xScale(Object.keys(data_1)[d.index]); })
+        .attr("x", function(d) { return xScale(d.data.elo_intervalo); })
         .attr("y", function(d) { return yScale(d[1]); })
         .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
         .attr("width", xScale.bandwidth());
-
+    
     // Añade ejes
     SVG1.append("g")
         .attr("transform", "translate(0," + (HEIGHT_VIS_1 - margins_1[2]) + ")")
         .call(d3.axisBottom(xScale));
-
-    SVG1.append("g")
+    
+        SVG1.append("g")
+        .attr("transform", "translate(" + margins_1[0] + ", 0)")
         .call(d3.axisLeft(yScale));
 }
 
