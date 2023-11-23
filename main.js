@@ -1,9 +1,9 @@
 const SVG1 = d3.select("#vis-1").append("svg");
 const SVG2 = d3.select("#vis-2").append("svg");
 const SVG3 = d3.select("#vis-2").append("svg");
-const datos = "aperturas.csv"
+const data_vis_1 = "data_vis_1.csv"
 
-const WIDTH_VIS_1 = 800;
+const WIDTH_VIS_1 = 1400;
 const HEIGHT_VIS_1 = 800;
 
 const WIDTH_VIS_2 = 800;
@@ -27,137 +27,73 @@ cargar_datos();
 
 
 function cargar_datos() {
-    d3.csv(datos).then(d => {
-        let data = d.map(item => ({
-            first_move: item.FirstMove,
-            elo: +item.WhiteElo,
-            eco: item.ECO,
-        }));
-        mostrar_grafico(data);     
-    })       
+    d3.csv(data_vis_1).then(function(d) {
+        
+        var data_1 = {};
+      
+        
+        d.forEach(function(d) {
+          d.Nf3 = +d.Nf3;
+          d.c4 = +d.c4;
+          d.d4 = +d.d4;
+          d.e3 = +d.e3;
+          d.e4 = +d.e4;
+      
+        
+          data_1[d.elo_intervalo] = {
+            Nf3: d.Nf3,
+            c4: d.c4,
+            d4: d.d4,
+            e3: d.e3,
+            e4: d.e4
+          };
+        });
+      
+        // console.log(dataDictionary["[700, 800)"]);
+        // Output: { Nf3: 3, c4: 0, d4: 2, e3: 5, e4: 29 }
+        mostrar_grafico(data_1);
+        
+      });       
 }
 
 
 
-function mostrar_grafico(data){
+function mostrar_grafico(data_1){
 
-    const n = Object.keys(data).length;
-    console.log(n)
+    var series = d3.stack().keys(["Nf3", "c4", "d4", "e3", "e4"])(Object.values(data_1));
 
-    const eloMinimo = 700;
-    const eloMaximo = 2700;
+    var colorScale = d3.scaleOrdinal()
+        .domain(["Nf3", "c4", "d4", "e3", "e4"])
+        .range(d3.schemeCategory10);
 
-    console.log(eloMinimo);
-    console.log(eloMaximo);
+    var xScale = d3.scaleBand()
+        .domain(Object.keys(data_1))
+        .range([margins_1[0], WIDTH_VIS_1 - margins_1[1]])
+        .padding(0.1);
 
-    //Escalas
+    var yScale = d3.scaleLinear()
+        .domain([0, 100])  // Ajusta el dominio según tus datos
+        .range([HEIGHT_VIS_1 - margins_1[2], margins_1[3]]);
 
-    const escala_vertical = d3.scaleLog()
-        .domain([0, 100])
-        .range([margins_1[3], HEIGHT_VIS_1 - margins_1[2]]);
-    
-    const escala_horizontal = d3.scaleLog()
-        .domain([1, 10000])
-        .range([margins_1[0], WIDTH_VIS_1] - margins_1[1]);
+    SVG1.selectAll("g")
+        .data(series)
+        .enter().append("g")
+        .attr("fill", function(d) { return colorScale(d.key); })
+        .selectAll("rect")
+        .data(function(d) { return d; })
+        .enter().append("rect")
+        .attr("x", function(d) { return xScale(Object.keys(data_1)[d.index]); })
+        .attr("y", function(d) { return yScale(d[1]); })
+        .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
+        .attr("width", xScale.bandwidth());
 
+    // Añade ejes
+    SVG1.append("g")
+        .attr("transform", "translate(0," + (HEIGHT_VIS_1 - margins_1[2]) + ")")
+        .call(d3.axisBottom(xScale));
 
-    //Figuras
-    let planetsG = SVG1.append('g').attr('id', 'planetsG');
-        planetsG
-            .selectAll("text")
-            .data(data)
-            .join("text")
-            .attr("x", d => escala_vertical(d.distance_from_sun))
-            .attr("y", d => HEIGHT_VIS_1 / 2 + d.radius*350 + 10)
-            .text(d => d.planet)
-            .attr("fill", "white")
-            .style("font-size", "5px");
-        
-
-        planetsG
-            .selectAll("ellipse")
-            .data(data)
-            .enter()
-            .append("ellipse")
-            .attr("cx", 0) 
-            .attr("cy",WIDTH_VIS_1/2) 
-            .attr("rx", d => escala_vertical(d.distance_from_sun)) 
-            .attr("ry", d => escala_vertical(d.distance_from_sun)/2) 
-            .attr("fill", "none") 
-            .attr("stroke", "gray")
-            .attr("stroke-width", 0.2); 
-
-        planetsG
-            .selectAll("circle")
-            .data(data)
-            .join("circle")
-            .attr("cx", d => escala_vertical(d.distance_from_sun))
-            .attr("cy", HEIGHT_VIS_1 /2)
-            .attr("r", d => d.radius * 350)
-            .attr("fill", d => escala_colores(d.mean_temperature))
-            .attr("data-planet", d => d.planet)
-            .on("mouseover", showTooltip)
-            .on("mouseout", hideTooltip)
-            .on("click", (event, d) => {
-                handleCircleClick(event, d, CATEGORIAS_POR_PLANETA[d.planet]);
-            });
-
-    //Funciones
-    function showTooltip(event, d) {  
-        const xPosition = escala_vertical(d.distance_from_sun) - 95;
-        const yPosition = HEIGHT_VIS_1 / 2;
-        let tooltip = planetsG.select("#tooltip");
-              
-        if (tooltip.empty()) {
-           tooltip = planetsG
-                .append("foreignObject")
-                .attr("id", "tooltip")
-                .attr("width", 95) 
-                .attr("height", 50) 
-                .attr("x", xPosition)
-                .attr("y", yPosition) 
-                .append("xhtml:div")
-                .style("width", "100%") 
-                .style("height", "100%") 
-                .style("background-color", "rgba(255, 255, 255, 0.9)") 
-                .style("border", "1px solid gray") 
-                .style("padding", "10px")
-                .style("font-size", "5px") 
-                .html(`<div style="color: black; text-align: left;">Planet: ${d.planet}<br>Diameter: ${d.diameter} km<br>
-                Distance from sun: ${d.diameter} Gm<br>Mean temperature: ${d.mean_temperature} °C</div>`);
-            }         
-        }
-              
-    function hideTooltip() {
-        if (tooltip) {
-            tooltip.remove(); 
-        }
-    }
-
-
-    function handleCircleClick(event, d, categoria) {
-        planetsG.selectAll("circle")
-          .filter(circleData => CATEGORIAS_POR_PLANETA[circleData.planet] !== categoria)
-          .classed("selected", false);
-      
-        planetsG.selectAll("circle")
-          .filter(circleData => CATEGORIAS_POR_PLANETA[circleData.planet] === categoria)
-          .classed("selected", true);
-      }
-    
-
-          
-          
-
-    const boton_1 = document.getElementById("showCat2");
-    const boton_2 = document.getElementById("showCat1");
-    boton_1.addEventListener("click", () => {
-        handleCircleClick(null, null, "DemoranPoco");
-      });
-    boton_2.addEventListener("click", () => {
-        handleCircleClick(null, null, "DemoranMucho");
-      });
-    
+    SVG1.append("g")
+        .call(d3.axisLeft(yScale));
 }
 
 
