@@ -77,13 +77,13 @@ function mostrar_grafico(data_1){
 
     var series = d3.stack()
         .keys(["Nf3", "c4", "d4", "e3", "e4"])
-        .order(d3.stackOrderNone)
+        .order(d3.stackOrderDescending)
         .offset(d3.stackOffsetNone)
         .value(function(d, key) { return d[key]; })(normalizedData);
     
     var colorScale = d3.scaleOrdinal()
         .domain(["Nf3", "c4", "d4", "e3", "e4"])
-        .range(d3.schemeCategory10);
+        .range(d3.schemeAccent);
     
     var xScale = d3.scaleBand()
         .domain(normalizedData.map(function(d) { return d.elo_intervalo; }))
@@ -110,10 +110,22 @@ function mostrar_grafico(data_1){
     SVG1.append("g")
         .attr("transform", "translate(0," + (HEIGHT_VIS_1 - margins_1[2]) + ")")
         .call(d3.axisBottom(xScale));
+
+    SVG1.append("text")
+        .attr("transform", "translate(" + (WIDTH_VIS_1 / 2) + " ," + (HEIGHT_VIS_1 - margins_1[2] + 35) + ")")
+        .style("text-anchor", "middle")
+        .style("fill", "white")
+        .text("Elo");
     
-        SVG1.append("g")
+    SVG1.append("g")
         .attr("transform", "translate(" + margins_1[0] + ", 0)")
         .call(d3.axisLeft(yScale));
+
+    SVG1.append("text")
+        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2] - 15) + ")")
+        .style("text-anchor", "middle")
+        .style("fill", "white")
+        .text("Porcentaje");
 }
 
 
