@@ -1,6 +1,6 @@
 const SVG1 = d3.select("#vis-1").append("svg");
 const SVG2 = d3.select("#vis-2").append("svg");
-const SVG3 = d3.select("#vis-2").append("svg");
+const SVG3 = d3.select("#vis-3").append("svg");
 const data_vis_1 = "data_vis_1.csv"
 
 const WIDTH_VIS_1 = 1400;
@@ -14,18 +14,25 @@ const HEIGHT_VIS_3 = 800;
 
 const margins_1 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
 const margins_2 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
-const margins_3 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
+const margins_3 = {top: 20, right: 20, bottom: 40, left: 40 };
 
-const CHESS_SQUARES = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
-    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
-    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
-    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
-    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
-    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
-    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
-    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"];
+const CHESS_SQUARES = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+                        "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+                        "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+                        "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+                        "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+                        "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+                        "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+                        "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
 
 const JUGADAS_POSIBLES = ["Nf3", "c4", "d4", "e3", "e4"];
+
+const ID_JUGADAS = {"Nf3": 0, "c4": 1, "d4": 2, "e3": 3, "e4": 4};
+
+const unicodePieces = {
+    'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+    'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+};
 
 SVG1.attr("width", WIDTH_VIS_1).attr("height", HEIGHT_VIS_1);
 SVG2.attr("width", WIDTH_VIS_2).attr("height", HEIGHT_VIS_2);
@@ -54,14 +61,11 @@ function cargar_datos() {
             e4: d.e4
           };
         });
-      
-        // console.log(dataDictionary["[700, 800)"]);
-        // Output: { Nf3: 3, c4: 0, d4: 2, e3: 5, e4: 29 }
+
         mostrar_grafico(data_1);
         
       });       
 }
-
 
 
 function mostrar_grafico(data_1){
@@ -83,17 +87,27 @@ function mostrar_grafico(data_1){
 
     let firstKey = Object.keys(data_1)[0];
     let seleccionados = Object.values(data_1[firstKey]).map(item => false)
-    console.log(seleccionados)
 
     var series = d3.stack()
-        .keys(["Nf3", "c4", "d4", "e3", "e4"])
+        .keys(JUGADAS_POSIBLES)
         .order(d3.stackOrderNone)
         .offset(d3.stackOffsetNone)
         .value(function(d, key) { return d[key]; })(normalizedData);
+
+    // create a grey color scale
+    var greyScale = d3.scaleOrdinal()
+        .domain(JUGADAS_POSIBLES)
+        .range(d3.schemeGreys[5]);
     
     var colorScale = d3.scaleOrdinal()
-        .domain(["Nf3", "c4", "d4", "e3", "e4"])
-        .range(d3.schemeCategory10);
+        .domain(JUGADAS_POSIBLES)
+        .range(d3.schemeAccent);
+    
+    // fill the color dictionary with the colors using colorScale for the values
+    var colorDict = {};
+    JUGADAS_POSIBLES.forEach(function(d) {
+        colorDict[d] = colorScale(d);
+    });
     
     var xScale = d3.scaleBand()
         .domain(normalizedData.map(function(d) { return d.elo_intervalo; }))
@@ -103,97 +117,145 @@ function mostrar_grafico(data_1){
     var yScale = d3.scaleLinear()
         .domain([0, 100])
         .range([HEIGHT_VIS_1 - margins_1[2], margins_1[3]]);
+
+    let eloRange;
+    let frecuencias;
+    let previousElo;
+    let new_data = false;
     
     SVG1.selectAll("g")
         .data(series)
         .enter().append("g")
         .attr("fill", function(d) { return colorScale(d.key); })
+        .on("click", function(event, d) {
+            let id_jugada = ID_JUGADAS[d.key];
+            if (previousElo != eloRange){
+                seleccionados = Object.values(data_1[firstKey]).map(item => false)
+            }
+            seleccionados[id_jugada] = !seleccionados[id_jugada];
+            previousElo = eloRange;
+            let selectedMoves = JUGADAS_POSIBLES.filter((_, i) => seleccionados[i]);
+
+            let elegidos = SVG1.selectAll("rect")
+                .filter(function(d, i) { return d.data.elo_intervalo == eloRange});
+            
+            let elegidos2 = elegidos.filter(function(d, i) { return seleccionados[i] == true});
+            console.log(elegidos2)
+
+            // make all rects gray except elegidos
+            SVG1.selectAll("rect")
+                .style("fill", function(d) { return greyScale(d.parentKey); });
+
+            elegidos2.style("fill", function(d) { return colorScale(d.parentKey); });
+
+            preprocesarNodo_Enlace(selectedMoves, eloRange , frecuencias, new_data, colorDict)
+            new_data = true;
+        })
+
         .selectAll("rect")
-        .data(function(d) { return d; })
+        .data(function(d) {
+            // Here, modify each data item to include the parent's key
+            return d.map(item => {
+                return {...item, parentKey: d.key};
+            });
+        })
         .enter().append("rect")
         .attr("x", function(d) { return xScale(d.data.elo_intervalo); })
         .attr("y", function(d) { return yScale(d[1]); })
         .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
         .attr("width", xScale.bandwidth())
-        .on('click', (event, d) => {
-            preprocesarNodo_Enlace(d.data.elo_intervalo, data_1[d.data.elo_intervalo]);
+        .on("click", function(event, d) {
+            //make every bar gray except the one that was clicked
+
+            eloRange = d.data.elo_intervalo;
+            frecuencias = data_1[eloRange];
+
+            // filter all rects that are on the same eloRange as the one clicked and their index is true in seleccionados
         });
     
-    // Añade ejes
     SVG1.append("g")
         .attr("transform", "translate(0," + (HEIGHT_VIS_1 - margins_1[2]) + ")")
         .call(d3.axisBottom(xScale));
+
+    SVG1.append("text")
+        .attr("transform", "translate(" + (WIDTH_VIS_1 / 2) + " ," + (HEIGHT_VIS_1 - margins_1[2] + 35) + ")")
+        .style("text-anchor", "middle")
+        .style("fill", "white")
+        .text("Elo");
     
-        SVG1.append("g")
+    SVG1.append("g")
         .attr("transform", "translate(" + margins_1[0] + ", 0)")
         .call(d3.axisLeft(yScale));
 
-    preprocesarNodo_Enlace(["e4", "e3", "d4", "Nf3", "c4"], "1000-1099", data_1["[1100, 1200)"])
+    SVG1.append("text")
+        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2] - 15) + ")")
+        .style("text-anchor", "middle")
+        .style("fill", "white")
+        .text("Porcentaje");
+
+    d3.select("#filter-reset").on("click", function() {
+        // delete everything in SVG1
+        SVG1.selectAll("*").remove();
+        SVG2.selectAll("*").remove();
+        SVG3.selectAll("*").remove();
+
+        // call itself again to reset the filter
+        mostrar_grafico(data_1);});
+
 
 }
 
 
-function nodo_enlace(data, jugadas, elo, data_1){
-    console.log(data_1)
+function nodo_enlace(data, jugadas, elo, data_1, new_data, colorDict){
 
-    let dataArray = Object.values(data);
+    if (new_data) {
+        SVG2.selectAll("*").remove();
+    }
 
     let svg = SVG2;
 
-    // nos quedamos con los datos del rango de elo
-    let datos = data[elo]
     let filteredData = {}
 
     let eloData = data[elo];
+
     jugadas.forEach(key => {
         filteredData[key] = eloData[key];})
 
     let entries = Object.entries(filteredData);
-    entries.sort((a, b) => b[1] - a[1]);  // Sort in descending order
+    entries.sort((a, b) => b[1] - a[1]); 
     let sortedData1 = Object.fromEntries(entries);
 
     let sortedData = {};
 
     Object.keys(sortedData1).forEach(move => {
         let openings = Object.entries(sortedData1[move])
-            .sort((a, b) => b[1] - a[1]) // Ensure it's sorted in descending order
-            .slice(0, 5) // Take the first 5 entries
-            .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {}); // Convert array back to object
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
 
         sortedData[move] = openings;
     });
 
-    console.log(sortedData)
+    let MAX_FIRSTMOVE = Math.max(...Object.values(data_1));
+    let MIN_FIRSTMOVE = Math.min(...Object.values(data_1));
 
-    // Find the max and min from the datos_1 dictionary
-    const MAX_FIRSTMOVE = Math.max(...Object.values(data_1));
-    const MIN_FIRSTMOVE = Math.min(...Object.values(data_1));
-
-    console.log(MIN_FIRSTMOVE, MAX_FIRSTMOVE)
-
-    // make a scale for the radius of the circles
     let firstMoveRadius = d3.scaleLinear()
         .domain([MIN_FIRSTMOVE, MAX_FIRSTMOVE])
         .range([30, 70]);
 
     let allValues = [];
 
-    // Flatten all the values into a single array
     Object.values(sortedData).forEach(innerDict => {
         allValues.push(...Object.values(innerDict));
     });
 
-    // Find the max and min from the array
-    const MAX_OPENING = Math.max(...allValues);
-    const MIN_OPENING = Math.min(...allValues);
+    let MAX_OPENING = Math.max(...allValues);
+    let MIN_OPENING = Math.min(...allValues);
 
     let openingRadius = d3.scaleLinear()
         .domain([MIN_OPENING, MAX_OPENING])
         .range([18, 30]);
 
-    console.log(MAX_OPENING, MIN_OPENING)
-
-    // create a 'g' element for each data entry, to make a node-link diagram with d3
     let firstMovesKeys = Object.keys(sortedData);
 
     let numFirstMoves = firstMovesKeys.length;
@@ -202,7 +264,7 @@ function nodo_enlace(data, jugadas, elo, data_1){
     let svgHeight = HEIGHT_VIS_2;
     
 
-    let cols = Math.min(2, numFirstMoves); // Maximum of 2 columns
+    let cols = Math.min(2, numFirstMoves);
     let rows = Math.ceil(numFirstMoves / cols);
 
     let regionWidth = svgWidth / cols;
@@ -231,6 +293,13 @@ function nodo_enlace(data, jugadas, elo, data_1){
 
     datasets.forEach(dataset => {
         let regionGroup = svg.select(".region-" + dataset.move);
+
+        if (new_data)
+        {
+            regionGroup.selectAll("*").remove();
+        }
+
+        // Idea de las simulaciones: https://d3-graph-gallery.com/graph/network_basic.html
     
         let simulation = d3.forceSimulation(dataset.nodes)
             .force("link", d3.forceLink(dataset.links).id(d => d.id).distance(50))
@@ -238,22 +307,23 @@ function nodo_enlace(data, jugadas, elo, data_1){
             .force("center", d3.forceCenter(regionWidth / 2, svgHeight / 5))
             .force("y", d3.forceY(d => d.fixedY ? d.fixedY : svgHeight / 2))
             .force("x", d3.forceX(regionWidth / 2));
-
-    
-        // Draw links
+        
         let link = regionGroup.selectAll(".link")
             .data(dataset.links)
             .enter().append("line")
             .attr("class", "link")
             .style("stroke", "white");
-    
-        // Draw nodes
+
         let node = regionGroup.selectAll(".node")
             .data(dataset.nodes)
             .enter().append("circle")
             .attr("class", "node")
             .attr("r", d => d.type === 'firstMove' ? firstMoveRadius(d.sizeVariable) : openingRadius(d.sizeVariable))
-            .style("fill", d => d.type === 'firstMove' ? "blue" : "red");
+            .style("fill", d => d.type === 'firstMove' ? colorDict[d.id] : "white")
+            .on("click", function(event, d) {
+                let eco = d.id;
+                preprocesarChess_Graph(eco);
+            })
 
         function calculateFontSize(radius) {
                 return Math.min(10 + radius / 2, 15);
@@ -267,7 +337,7 @@ function nodo_enlace(data, jugadas, elo, data_1){
             .attr("y", d => d.y)
             .attr("dy", ".35em")
             .style("text-anchor", "middle")
-            .style("fill", "white")
+            .style("fill", "black")
             .style("font-size", d => calculateFontSize(d.sizeVariable))
             .text(d => d.id);
 
@@ -289,11 +359,106 @@ function nodo_enlace(data, jugadas, elo, data_1){
     return;
 }
 
-function chess_graph(opening){
+function chess_graph(board_state){
+
     let svg = SVG3;
+
+    SVG3.style("background-color", "brown")
+
+    let chessboardGroup = svg.append("g")
+        .attr("transform", `translate(${margins_3.left}, ${margins_3.top})`);
+
+    let squaresData = CHESS_SQUARES.map((square, index) => {
+        let col = index % 8;
+        let row = Math.floor(index / 8);
+        let isWhiteSquare = (row + col) % 2 === 0;
+        return {
+            id: square,
+            col: col,
+            row: row,
+            color: isWhiteSquare ? "#eedc97" : "#964d22"
+        };
+    });
+
     let svgWidth = WIDTH_VIS_3;
     let svgHeight = HEIGHT_VIS_3;
+    let squareSize = Math.min((svgWidth - margins_3.left - margins_3.right), (svgHeight - margins_3.top - margins_3.bottom)) / 8;
 
-    let numSquares = 8;
-    let squareSize = Math.min(svgWidth, svgHeight) / numSquares;
+    const rows = ["8", "7", "6", "5", "4", "3", "2", "1"]
+
+    rows.forEach((row, i) => {
+        chessboardGroup.append("text")
+        .attr("x", -margins_3.left / 2)
+        .attr("y", i * squareSize + squareSize / 2)
+        .attr("dy", ".35em")
+        .style("text-anchor", "middle")
+        .style("font-weight", "bold")
+        .style("fill", "white")
+        .text(rows[i]);
+    })
+
+    const columns = ["a", "b", "c", "d", "e", "f", "g", "h"];
+    columns.forEach((col, i) => {
+        chessboardGroup.append("text")
+            .attr("x", i * squareSize + squareSize / 2)
+            .attr("y", 8 * squareSize + margins_3.bottom / 2)
+            .style("text-anchor", "middle")
+            .style("font-weight", "bold")
+            .style("fill", "white")
+            .text(col);
+    });
+
+    let piecePlacement = board_state.split(' ')[0];
+    let ranks = piecePlacement.split('/');
+
+    let startingPositions = {};
+
+    ranks.forEach((rank, rowIndex) => {
+        let fileIndex = 0;
+        for (let char of rank) {
+            if (isNaN(char)) {
+                const position = String.fromCharCode(97 + fileIndex) + (8 - rowIndex);
+                startingPositions[position] = char;
+                fileIndex++;
+            } else {
+                fileIndex += parseInt(char);
+            }
+        }
+    });
+
+    chessboardGroup.selectAll(".chess-square")
+        .data(squaresData)
+        .enter()
+        .append("g")
+        .attr("class", "chess-square")
+        .attr("transform", d => `translate(${d.col * squareSize}, ${d.row * squareSize})`)
+        .append("rect")
+        .attr("width", squareSize)
+        .attr("height", squareSize)
+        .attr("fill", d => d.color);
+    
+    let piecesData = Object.entries(startingPositions).map(([position, piece], index) => {
+        let col = position.charCodeAt(0) - 'a'.charCodeAt(0);
+        let row = 8 - parseInt(position.charAt(1)); 
+        return {
+            id: position,
+            piece: unicodePieces[piece] || piece,
+            col: col,
+            row: row,
+            color: piece === piece.toUpperCase() ? "white" : "black"
+        };
+    });
+
+    chessboardGroup.selectAll(".chess-piece")
+        .data(piecesData)
+        .enter()
+        .append("g")
+        .attr("class", "chess-piece")
+        .attr("transform", d => `translate(${d.col * squareSize + squareSize / 2}, ${d.row * squareSize + squareSize / 2})`)
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .style("font-size", `${squareSize / 2}px`)
+        .style("fill", d => d.color === "white" ? "white" : "black")
+        .text(d => d.piece);
 }
