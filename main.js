@@ -101,7 +101,8 @@ function mostrar_grafico(data_1){
         .enter().append("g")
         .attr("fill", function(d) { return colorScale(d.key); })
         .on("click", function(event, d) {
-            console.log(d.key);
+            console.log(d);
+
         })
         .selectAll("rect")
         .data(function(d) { return d; })
