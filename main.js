@@ -12,7 +12,7 @@ const HEIGHT_VIS_2 = 1200;
 const WIDTH_VIS_3 = 800;
 const HEIGHT_VIS_3 = 800;
 
-const margins_1 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
+const margins_1 = [50, 50, 100, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
 const margins_2 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
 const margins_3 = {top: 20, right: 20, bottom: 40, left: 40 };
 
@@ -188,10 +188,41 @@ function mostrar_grafico(data_1){
         .call(d3.axisLeft(yScale));
 
     SVG1.append("text")
-        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2] - 15) + ")")
+        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2]- 65) + ")")
         .style("text-anchor", "middle")
         .style("fill", "white")
         .text("Porcentaje");
+    
+    const leyendaDatos = series.map(d => ({ key: d.key, color: colorScale(d.key) }));
+
+    const leyenda = SVG1.append("g")
+    .attr("class", "leyenda")
+    .attr("transform", "translate(480,"+(HEIGHT_VIS_1 - 50) + ")"); // Ajusta la posición de la leyenda según tus necesidades
+
+    const elementosLeyenda = leyenda.selectAll("g")
+    .data(leyendaDatos)
+    .enter().append("g")
+    .attr("transform", function(d, i) { return "translate(" + i * 100 + ", 0)"; }); // Ajusta el espacio entre elementos
+
+// Agregar círculo de color
+    elementosLeyenda.append("circle")
+    .attr("cx", 9)
+    .attr("cy", 9)
+    .attr("r", 9) // Ajusta el radio según tus necesidades
+    .style("fill", function(d) { return d.color; });
+
+// Agregar texto
+    elementosLeyenda.append("text")
+    .attr("x", 25)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "start")
+    .text(function(d) { return d.key; });     
+
+    leyenda.selectAll("text")
+        .style("font-size", "12px")
+        .style("font-family", "Arial")
+        .style("fill", "white");
 
     d3.select("#filter-reset").on("click", function() {
         // delete everything in SVG1
