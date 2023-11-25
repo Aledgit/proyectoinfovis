@@ -136,14 +136,14 @@ function mostrar_grafico(data_1){
             previousElo = eloRange;
             let selectedMoves = JUGADAS_POSIBLES.filter((_, i) => seleccionados[i]);
 
-            let elegidos = SVG1.selectAll("rect")
+            let elegidos = SVG1.selectAll("rect#jugada_elo")
                 .filter(function(d, i) { return d.data.elo_intervalo == eloRange});
             
             let elegidos2 = elegidos.filter(function(d, i) { return seleccionados[i] == true});
             console.log(elegidos2)
 
             // make all rects gray except elegidos
-            SVG1.selectAll("rect")
+            SVG1.selectAll("rect#jugada_elo")
                 .style("fill", function(d) { return greyScale(d.parentKey); });
 
             elegidos2.style("fill", function(d) { return colorScale(d.parentKey); });
@@ -152,7 +152,7 @@ function mostrar_grafico(data_1){
             new_data = true;
         })
 
-        .selectAll("rect")
+        .selectAll("rect#jugada_elo")
         .data(function(d) {
             // Here, modify each data item to include the parent's key
             return d.map(item => {
@@ -164,6 +164,7 @@ function mostrar_grafico(data_1){
         .attr("y", function(d) { return yScale(d[1]); })
         .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
         .attr("width", xScale.bandwidth())
+        .attr("id", "jugada_elo")
         .on("click", function(event, d) {
             //make every bar gray except the one that was clicked
 
@@ -205,12 +206,12 @@ function mostrar_grafico(data_1){
     .enter().append("g")
     .attr("transform", function(d, i) { return "translate(" + i * 100 + ", 0)"; }); // Ajusta el espacio entre elementos
 
-// Agregar círculo de color
-    elementosLeyenda.append("circle")
-    .attr("cx", 9)
-    .attr("cy", 9)
-    .attr("r", 9) // Ajusta el radio según tus necesidades
+
+    elementosLeyenda.append("rect")
+    .attr("width", 18)
+    .attr("height", 18)
     .style("fill", function(d) { return d.color; });
+
 
 // Agregar texto
     elementosLeyenda.append("text")
