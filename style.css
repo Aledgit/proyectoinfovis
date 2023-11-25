@@ -1,6 +1,5 @@
 body {
     margin: 0 auto;
-    
     background-color: #373737;
     color: whitesmoke;
     max-width: 1200px;
@@ -8,10 +7,10 @@ body {
     text-align: center;
     display: flex;
     justify-content: center;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif, 'FreeSerif';
 }
 
-h5 {
+h5, h4 {
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -21,8 +20,13 @@ svg {
 }
 
 
+#variante {
+    margin-bottom: 30px;
+}
+
 .selected {
     stroke: white;
     stroke-width: 2;
     fill-opacity: 1; 
 }
+
