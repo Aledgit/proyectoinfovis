@@ -193,11 +193,12 @@ function mostrar_grafico(data_1){
         .style("fill", "white")
         .text("Porcentaje");
     
+    //Leyenda
     const leyendaDatos = series.map(d => ({ key: d.key, color: colorScale(d.key) }));
 
     const leyenda = SVG1.append("g")
     .attr("class", "leyenda")
-    .attr("transform", "translate(480,"+(HEIGHT_VIS_1 - 50) + ")"); // Ajusta la posición de la leyenda según tus necesidades
+    .attr("transform", "translate(492,"+(HEIGHT_VIS_1 - 50) + ")"); // Ajusta la posición de la leyenda según tus necesidades
 
     const elementosLeyenda = leyenda.selectAll("g")
     .data(leyendaDatos)
@@ -223,6 +224,7 @@ function mostrar_grafico(data_1){
         .style("font-size", "12px")
         .style("font-family", "Arial")
         .style("fill", "white");
+    //Fin leyenda
 
     d3.select("#filter-reset").on("click", function() {
         // delete everything in SVG1
