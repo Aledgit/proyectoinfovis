@@ -143,7 +143,8 @@
                 <h4>Respuesta:</h4>
                 <p>La primera visualizacion es un gráfico de barras apiladas, donde las marcas son: glifos formados por barras que representan un
                     movimiento inicial específico y los canales son: posicion horizontal que representa el rango de elo, la altura de cada barra que representa
-                    el porcentaje de veces que se hace esa jugada inicial en un rango de elo específico y el color que representa una jugada incial específica.<br>
+                    el porcentaje de veces que se hace esa jugada inicial en un rango de elo específico y el color que representa una jugada incial específica, esta
+                    visualizacion es util para ver con una sola mirada las diferencias que hay en la jugada inicial en los distintos elos.<br>
                     También posee una leyenda que nos indica que jugada representa cada color, además se pueden seleccionar multiples barras y tambien deseleccionar (solo de un rango de elo) haciendo click en la barra por medio de d3-brush,
                     las cuales tendrán su color original, mientras las no seleccionadas quedarán en escala de grises, la seleccion afectará la siguiente visualización a modo de filtro,
                     también hay un boton arriba de la visualizacion que dice "Reset" que sirve para dejar la visualizacion en su estado inicial.
@@ -158,9 +159,10 @@
                 <p>La segunda visualizacion es un diagrama nodo/enlace donde las marcas son: nodos (círculos) que representan una jugada (nodo padre)
                     o una apertura (nodo hijo), también hay líneas que son marcas de conexion, que relacionan a una jugada con las aperturas a las que lleva,
                     y los canales son: tamaño para representar la frecuencia de una jugada o apertura en un rango de elo específico y el color que representa una jugada
-                    inicial específica.<br>
+                    inicial específica (mismo color que en la visualizacón anterior para no confundir).<br>
                     Esta visualizacion está fuertemente relacionada con la anterior, pues no se mostrara una jugada con sus aperturas hasta que
-                    esta esté seleccionada en la visualización anterior, también es posible "clickear" un nodo hijo (apertura) para activar la siguiente visualización.</p>
+                    esta esté seleccionada en la visualización anterior, esto para que el usuario pueda irse al detalle de un elo o jugada específica de un elo,
+                    a modo de que vea lo que le interese, también es posible "clickear" un nodo hijo (apertura) para activar la siguiente visualización.</p>
             </div>
             <div class="response">
                 <h4>Decisiones de diseño relacionadas a la tercera tarea visual</h4>
@@ -172,7 +174,7 @@
                     y también de cada casilla.<br>
                     Esta visualización sólo se activa si se hace "click" en una apertura en la visualización anterior, además arriba hay una barra que dejará ver 
                     las distintas variaciones de la apertura seleccionada y representarlas en el tablero por medio de la posición de los glifos, también se muestran
-                    las jugadas que se hicieron para llegar a la posicion (notación algebráica).
+                    las jugadas que se hicieron para llegar a la posicion (notación algebráica), ya que conocer la posición final es tan importante que saber cómo llegar a ella.
                 </p>
             </div>
         </div>
