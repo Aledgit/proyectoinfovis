@@ -20,6 +20,7 @@ while True:
     eco_code = game.headers["Site"]
     opening_name = game.headers["White"]
     variation_name = game.headers["Black"]
+    moves = game.headers["Result"]
 
     # Combine both names if the variation name exists
     if variation_name != "?":

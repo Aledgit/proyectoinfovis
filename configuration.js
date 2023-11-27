@@ -7,24 +7,51 @@ let JUGADAS = [];
 let VARIANTES = [];
 let previous_eco = '';
 
-function preprocesarNodo_Enlace(jugadas, rango_elo, data_1, new_data, colorDict) {
+function preprocesarNodo_Enlace(elegidas, rango_elo, data_1, new_data, colorDict) {
     // y lo guardo en mi variable externa "SATELITES".
     if (JUGADAS.length == 0) {
         d3.json('eco_count_dict.json').then(dataset => {
             // Como no pongo let antes, sobrescribo la variable anterior.
             JUGADAS = dataset;
+            // Find all the eco_codes for the selected elo range for the selected jugadas
             // Llamo de nuevo a preprocesarSatelites 
             // para que ahora si se ejecute cuando SATELITES tenga datos
-            preprocesarNodo_Enlace(jugadas, rango_elo, data_1, new_data, colorDict)
+            preprocesarNodo_Enlace(elegidas, rango_elo, data_1, new_data, colorDict)
         })
         // Hacemos return para que la función no continue su ejecución
         return 0;
     }
 
+    let elo_filtered = JUGADAS[rango_elo];
+    let eco_codes = [];
+            elegidas.forEach(d => {
+                eco_codes.push([d, Object.keys(elo_filtered[d])]);
+            })
+
+    console.log(eco_codes)
+
+    if (VARIANTES.length == 0) {
+        d3.json('openings_data2.json').then(dataset => {
+            VARIANTES = dataset;
+            preprocesarNodo_Enlace(elegidas, rango_elo, data_1, new_data, colorDict)            
+        })
+        return 0;
+    }
+
+    console.log(VARIANTES["A21"])
+
+    let eco_dict = {};
+    eco_codes.forEach(tuple => {
+        eco_dict[tuple[0]] = [];
+        tuple[1].forEach(eco => {
+            eco_dict[tuple[0]].push(VARIANTES[eco]["children"]);
+        }) 
+    })
+
     // Generamos una copia del dataset
     let data = JSON.parse(JSON.stringify(JUGADAS));
 
-    nodo_enlace(data, jugadas, rango_elo, data_1, new_data, colorDict);
+    nodo_enlace(data, elegidas, rango_elo, data_1, new_data, colorDict, eco_dict);
 }
 
 function preprocesarChess_Graph(eco) {

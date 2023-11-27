@@ -1,8 +1,3 @@
-#open aperturas.csv
-
-# crear un diccionario para uno de los rangos de elo [700,800), [800,900) .... , [2600,2700)
-# dentro de ese diccionario, crear un diccionario para cada 'FirstMove', y para cada una de esas jugadas, contar cuantas veces aparece cada "ECO"
-
 import json
 
 # read openings_data.json and create a dictionary with the following structure:
@@ -27,15 +22,4 @@ with open('openings_data.json') as f:
             'final_board_state': final_board_state
         })
 
-
-# now open aperturas.csv
-
-with open('aperturas.csv') as f:
-
-    # we want a dictionary with the following structure:
-    # {'elo': {
-    #   'FirstMove': {
-        
-
-
-        
+print(openings_dict)

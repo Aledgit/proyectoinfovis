@@ -201,8 +201,6 @@ function mostrar_grafico(data_1){
 
         // call itself again to reset the filter
         mostrar_grafico(data_1);});
-
-
 }
 
 
@@ -230,7 +228,7 @@ function nodo_enlace(data, jugadas, elo, data_1, new_data, colorDict){
     Object.keys(sortedData1).forEach(move => {
         let openings = Object.entries(sortedData1[move])
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
+            .slice(0, 9)
             .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
 
         sortedData[move] = openings;
@@ -293,12 +291,6 @@ function nodo_enlace(data, jugadas, elo, data_1, new_data, colorDict){
 
     datasets.forEach(dataset => {
         let regionGroup = svg.select(".region-" + dataset.move);
-
-        if (new_data)
-        {
-            regionGroup.selectAll("*").remove();
-        }
-
         // Idea de las simulaciones: https://d3-graph-gallery.com/graph/network_basic.html
     
         let simulation = d3.forceSimulation(dataset.nodes)
