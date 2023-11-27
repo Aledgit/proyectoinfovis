@@ -68,7 +68,9 @@
                     son:<br>
                     -WhiteElo (elo del jugador de blancas) <br>
                     -ECO (codigos que representan las diferentes aperturas según la Clasificación Enciclopédica de Aperturas (ECO))<br>
-                    -FirstMove (primer movimiento realizado por las piezas blancas)
+                    -FirstMove (primer movimiento realizado por las piezas blancas)<br><br>
+                    *Cabe mencionar que el par (FirstMove, ECO) es una relación, pues hay un vínculo, ya que la jugada inicial llevará a la apertura.
+                
                 </p>
             </div>
             <div class="response">
@@ -76,7 +78,8 @@
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Respuesta:</h4>
                 <p>Datos Numéricos: WhiteElo (por ejemplo, 750, 1765, 1924) <br>
-                Datos Categóricos Nominales: FirstMove (por ejemplo, "e4", "d4") y ECO (por ejemplo,  "A00", "C20").</p>
+                Datos Categóricos Nominales: FirstMove (por ejemplo, "e4", "d4") y ECO (por ejemplo,  "A00", "C20") <br><br>
+                *FirstMove también puede ser considerado un dato espacial, pues nos indica una posicion en el tablero.</p>
             </div>
         </div>
 
@@ -94,7 +97,9 @@
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Acción: comparar</h4>
                 <h4>Objetivo: frecuencia</h4>
-                <p>Justificar la acción-objetivo con el dominio presentado: cómo cambia la frecuencia de una jugada inicial a partir del elo.</p>
+                <p>Justificar la acción-objetivo con el dominio presentado: lo que se busca es que el usuarios pueda visualizar cómo cambia
+                     la frecuencia de una jugada inicial a partir del elo, con el fin de que pueda reconocer si una jugada es de elo bajo, medio o alto, en
+                     caso de que hayan diferencias.</p>
             </div>
             <div class="response">
                 <h4>Tarea 2 (acción + objetivo) + justificación según el dominio presentado</h4>
@@ -108,7 +113,10 @@
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Acción: explorar</h4>
                 <h4>Objetivo: caminos</h4>
-                <p>Justificar la acción-objetivo con el dominio presentado: explorar las diferentes aperturas a las que nos puede llevar una jugada inicial. </p>
+                <p>Justificar la acción-objetivo con el dominio presentado: lo que se busca es explorar las diferentes aperturas a las que
+                    nos puede llevar una jugada inicial en un rango de elo específico a la vez que conocemos su frecuencia (dentro del mismo rango),
+                    esto es util para conocer mas sobre la teoría de aperturas y también para descubrir qué serie jugadas esperar de un jugador
+                    dentro de un rango específico y así poder prepararse contra ellas.</p>
             </div>
             <div class="response">
                 <h4>Tarea 3 (acción + objetivo) + justificación según el dominio presentado</h4>
@@ -122,7 +130,8 @@
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Acción: presentar</h4>
                 <h4>Objetivo: forma</h4>
-                <p>Justificar la acción-objetivo con el dominio presentado: presentar como se ve cada apertura con sus variantes.</p>
+                <p>Justificar la acción-objetivo con el dominio presentado: lo que se busca presentar como se ve cada apertura con sus variantes en el tablero,
+                    ya que la mayoría de jugadores no sabe como se ve una apertura a partir de su código ECO.</p>
             </div>
         </div>
 
@@ -135,9 +144,9 @@
                 <p>La primera visualizacion es un gráfico de barras apiladas, donde las marcas son: glifos formados por barras que representan un
                     movimiento inicial específico y los canales son: posicion horizontal que representa el rango de elo, la altura de cada barra que representa
                     el porcentaje de veces que se hace esa jugada inicial en un rango de elo específico y el color que representa una jugada incial específica.<br>
-                    También se pueden seleccionar multiples barras y tambien deseleccionar (solo de un rango de elo) haciendo click en la barra,
+                    También se pueden seleccionar multiples barras y tambien deseleccionar (solo de un rango de elo) haciendo click en la barra por medio de d3-brush,
                     las cuales tendrán su color original, mientras las no seleccionadas quedarán en escala de grises, la seleccion afectará la siguiente visualización a modo de filtro,
-                    también hay un boton arriba de la visualizacion que dice: "Reset" que sirve para dejar la visualizacion en su estado inicial.
+                    también hay un boton arriba de la visualizacion que dice "Reset" que sirve para dejar la visualizacion en su estado inicial.
 
                     
                 </p>
@@ -146,13 +155,24 @@
                 <h4>Decisiones de diseño relacionadas a la segunda tarea visual</h4>
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Respuesta:</h4>
-                <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+                <p>La segunda visualizacion es un diagrama nodo/enlace donde las marcas son: nodos (círculos) que representan una jugada (nodo padre)
+                    o una apertura (nodo hijo), también hay líneas que son marcas de conexion, que relacionan a una jugada con las aperturas a las que lleva,
+                    y los canales son: tamaño para representar la frecuencia de una jugada o apertura en un rango de elo específico y el color que representa una jugada
+                    inicial específica.<br>
+                    Esta visualizacion está fuertemente relacionada con la anterior, pues no se mostrara una jugada con sus aperturas hasta que
+                    esta esté seleccionada en la visualización anterior, también es posible "clickear" un nodo hijo (apertura) para activar la siguiente visualización.</p>
             </div>
             <div class="response">
                 <h4>Decisiones de diseño relacionadas a la tercera tarea visual</h4>
                 <!-- Puedes agregar los P que sean necesarios -->
                 <h4>Respuesta:</h4>
-                <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+                <p>La tercera visualización es un tablero de ajedrez con sus piezas, las marcas son: glifos que representan a cada pieza, cuadrados que representan cada casilla
+                    del tablero, y los canales son: posicion horizontal y vertical que representan la posicion de cada pieza en el tablero, que estarán en la posicion del 
+                    tablero que indique la apertura y el color que representa el color de cada pieza
+                    y también de cada casilla.<br>
+                    Esta visualización sólo se activa si se hace "click" en una apertura en la visualización anterior, además arriba hay una barra que dejará ver 
+                    las distintas variaciones de la apertura seleccionada, además de representarla en el tablero por medio de la posicion de los glifos.
+                </p>
             </div>
         </div>
 
