@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style_informe.css">
+    <title>Proyecto</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Informe Proyecto</h1>
+        <p><i>Template</i> base confeccionar el informe. Se puede
+            modificar el estilo si así lo desean, pero se recomienda
+            mantener las secciones separadas para facilitar la corrección del informe.</p>
+
+        <div class="response">
+            <h3>Integrantes</h2>
+                <p>Nombre 1: Eduardo Álvarez</p>
+                <p>Nombre 2: Benjamín Varela</p>
+        </div>
+
+        <div class="case">
+            <h2>Situación de dominio</h2>
+            <div class="response">
+                <h4>Contexto de la situación y la naturaleza de los datos</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>Para entender nuestro trabajo es necesario saber lo siguiente: en el ajedrez existe algo llamado elo, es un número personal que intenta cuantificar que tan bueno es un jugador, entre más elo
+                tengas mejor eres, también existen las aperturas, que son una serie de movimientos iniciales (al rededor de 5 por cada
+                jugador) y cada apertura tiene un nombre y código asociado.<br>El dataset utilizado proviene de la plataforma de ajedrez
+                online Lichess y contiene todos los datos de las partidas jugadas en Junio del año 2014 en la plataforma
+                (961,868 partidas), tuvimos que preprocesar los datos utilizando la libreria chess y pandas de python, donde extrajimos el
+                elo del jugador de blancas, su jugada inicial y el codigo de la apertura que finalmente se jugó, luego se filtró para quedarse con las
+                5 primeras jugadas mas comunes y a partir de esos datos se crearon los archivos para las visualizaciones.</p>
+            </div>
+            <div class="response">
+                <h4>Fuente original de los datos</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>La fuente corresponde a la plataforma de ajedrez online Lichess <a href="https://database.lichess.org/#standard_games" target="_blank">(https://database.lichess.org/#standard_games)</a>
+            </div>
+            <div class="response">
+                <h4>Usuario objetivo</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>Cualquier jugador de ajedrez que desee aprender más sobre aperturas o cualquier persona que tenga interés en empezar a jugar ajedrez.</p>
+            </div>
+            <div class="response">
+                <h4>Uso de la herramienta</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>El usuario podrá buscar un rango de elo, ver las jugadas iniciales y luego ver a que aperturas llegan y como se ven en el tablero, todo esto con el 
+                    fin de conocer las distintas aperturas, además de ver las aperturas mas jugadas para su rango de elo y prepararse contra ellas o simplemente aprender de mejores jugadores.</p>
+            </div>
+
+        </div>
+
+        <div class="case">
+            <h2>Abstracción de datos</h2>
+            <div class="response">
+                <h4>Tipos de datos a utilizar en el proyecto</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>En archivo aperturas.csv que es sobre el cual trabajamos, cada item representa una partida de ajedrez y los atributos
+                    son:<br>
+                    -WhiteElo (elo del jugador de blancas) <br>
+                    -ECO (codigos que representan las diferentes aperturas según la Clasificación Enciclopédica de Aperturas (ECO))<br>
+                    -FirstMove (primer movimiento realizado por las piezas blancas)
+                </p>
+            </div>
+            <div class="response">
+                <h4>Tipos de atributos presente en los datos</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>Datos Numéricos: WhiteElo (por ejemplo, 750, 1765, 1924) <br>
+                Datos Categóricos Nominales: FirstMove (por ejemplo, "e4", "d4") y ECO (por ejemplo,  "A00", "C20").</p>
+            </div>
+        </div>
+
+        <div class="case">
+            <h2>Abstracción de tareas</h2>
+            <div class="response">
+                <h4>Tarea 1 (acción + objetivo) + justificación según el dominio presentado</h4>
+                <p class="hint">
+                    No olvides que las acciones son: presentar, descubrir, anotar, producir, grabar, localizar, ubicar,
+                    navegar, explorar, identificar, comparar o resumir. Luego, los objetivos son posibles aspectos de
+                    los datos a observar. Como: distribución, proporción, valor, correlación, tendencia, outlier,
+                    feature, caminos, topología, extremos, entre otros.
+                </p>
+
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Acción: comparar</h4>
+                <h4>Objetivo: frecuencia</h4>
+                <p>Justificar la acción-objetivo con el dominio presentado: cómo cambia la frecuencia de una jugada inicial a partir del elo.</p>
+            </div>
+            <div class="response">
+                <h4>Tarea 2 (acción + objetivo) + justificación según el dominio presentado</h4>
+                <p class="hint">
+                    No olvides que las acciones son: presentar, descubrir, anotar, producir, grabar, localizar, ubicar,
+                    navegar, explorar, identificar, comparar o resumir. Luego, los objetivos son posibles aspectos de
+                    los datos a observar. Como: distribución, proporción, valor, correlación, tendencia, outlier,
+                    feature, caminos, topología, extremos, entre otros.
+                </p>
+
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Acción: explorar</h4>
+                <h4>Objetivo: caminos</h4>
+                <p>Justificar la acción-objetivo con el dominio presentado: explorar las diferentes aperturas a las que nos puede llevar una jugada inicial. </p>
+            </div>
+            <div class="response">
+                <h4>Tarea 3 (acción + objetivo) + justificación según el dominio presentado</h4>
+                <p class="hint">
+                    No olvides que las acciones son: presentar, descubrir, anotar, producir, grabar, localizar, ubicar,
+                    navegar, explorar, identificar, comparar o resumir. Luego, los objetivos son posibles aspectos de
+                    los datos a observar. Como: distribución, proporción, valor, correlación, tendencia, outlier,
+                    feature, caminos, topología, extremos, entre otros.
+                </p>
+
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Acción: presentar</h4>
+                <h4>Objetivo: forma</h4>
+                <p>Justificar la acción-objetivo con el dominio presentado: presentar como se ve cada apertura con sus variantes.</p>
+            </div>
+        </div>
+
+        <div class="case">
+            <h2>Codificación visual e interacciones</h2>
+            <div class="response">
+                <h4>Decisiones de diseño relacionadas a la primera tarea visual</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>La primera visualizacion es un gráfico de barras apiladas, donde las marcas son: glifos formados por barras que representan un
+                    movimiento inicial específico y los canales son: posicion horizontal que representa el rango de elo, la altura de cada barra que representa
+                    el porcentaje de veces que se hace esa jugada inicial en un rango de elo específico y el color que representa una jugada incial específica.<br>
+                    También se pueden seleccionar multiples barras y tambien deseleccionar (solo de un rango de elo) haciendo click en la barra,
+                    las cuales tendrán su color original, mientras las no seleccionadas quedarán en escala de grises, la seleccion afectará la siguiente visualización a modo de filtro,
+                    también hay un boton arriba de la visualizacion que dice: "Reset" que sirve para dejar la visualizacion en su estado inicial.
+
+                    
+                </p>
+            </div>
+            <div class="response">
+                <h4>Decisiones de diseño relacionadas a la segunda tarea visual</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+            </div>
+            <div class="response">
+                <h4>Decisiones de diseño relacionadas a la tercera tarea visual</h4>
+                <!-- Puedes agregar los P que sean necesarios -->
+                <h4>Respuesta:</h4>
+                <p>Modifica solo este texto (no el de arriba) para poner tu respuesta</p>
+            </div>
+        </div>
+
+        <div class="case">
+            <h3>
+                <a href="index.html">Enlace para acceder a la visualización</a>
+            </h3>
+        </div>
+
+</body>
+
+</html>
