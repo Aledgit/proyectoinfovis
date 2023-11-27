@@ -12,7 +12,7 @@ const HEIGHT_VIS_2 = 1200;
 const WIDTH_VIS_3 = 800;
 const HEIGHT_VIS_3 = 800;
 
-const margins_1 = [50, 50, 100, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
+const margins_1 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
 const margins_2 = [50, 50, 50, 50]; //ZQUIERDA, DERECHA, ARRIBA, ABAJO
 const margins_3 = {top: 20, right: 20, bottom: 40, left: 40 };
 
@@ -136,14 +136,14 @@ function mostrar_grafico(data_1){
             previousElo = eloRange;
             let selectedMoves = JUGADAS_POSIBLES.filter((_, i) => seleccionados[i]);
 
-            let elegidos = SVG1.selectAll("rect#jugada_elo")
+            let elegidos = SVG1.selectAll("rect")
                 .filter(function(d, i) { return d.data.elo_intervalo == eloRange});
             
             let elegidos2 = elegidos.filter(function(d, i) { return seleccionados[i] == true});
             console.log(elegidos2)
 
             // make all rects gray except elegidos
-            SVG1.selectAll("rect#jugada_elo")
+            SVG1.selectAll("rect")
                 .style("fill", function(d) { return greyScale(d.parentKey); });
 
             elegidos2.style("fill", function(d) { return colorScale(d.parentKey); });
@@ -152,7 +152,7 @@ function mostrar_grafico(data_1){
             new_data = true;
         })
 
-        .selectAll("rect#jugada_elo")
+        .selectAll("rect")
         .data(function(d) {
             // Here, modify each data item to include the parent's key
             return d.map(item => {
@@ -164,7 +164,6 @@ function mostrar_grafico(data_1){
         .attr("y", function(d) { return yScale(d[1]); })
         .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
         .attr("width", xScale.bandwidth())
-        .attr("id", "jugada_elo")
         .on("click", function(event, d) {
             //make every bar gray except the one that was clicked
 
@@ -189,43 +188,10 @@ function mostrar_grafico(data_1){
         .call(d3.axisLeft(yScale));
 
     SVG1.append("text")
-        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2]- 65) + ")")
+        .attr("transform", "translate(" + (margins_1[0]) + " ," + (margins_1[2] - 15) + ")")
         .style("text-anchor", "middle")
         .style("fill", "white")
         .text("Porcentaje");
-    
-    //Leyenda
-    const leyendaDatos = series.map(d => ({ key: d.key, color: colorScale(d.key) }));
-
-    const leyenda = SVG1.append("g")
-    .attr("class", "leyenda")
-    .attr("transform", "translate(492,"+(HEIGHT_VIS_1 - 50) + ")"); // Ajusta la posición de la leyenda según tus necesidades
-
-    const elementosLeyenda = leyenda.selectAll("g")
-    .data(leyendaDatos)
-    .enter().append("g")
-    .attr("transform", function(d, i) { return "translate(" + i * 100 + ", 0)"; }); // Ajusta el espacio entre elementos
-
-
-    elementosLeyenda.append("rect")
-    .attr("width", 18)
-    .attr("height", 18)
-    .style("fill", function(d) { return d.color; });
-
-
-// Agregar texto
-    elementosLeyenda.append("text")
-    .attr("x", 25)
-    .attr("y", 9)
-    .attr("dy", ".35em")
-    .style("text-anchor", "start")
-    .text(function(d) { return d.key; });     
-
-    leyenda.selectAll("text")
-        .style("font-size", "12px")
-        .style("font-family", "Arial")
-        .style("fill", "white");
-    //Fin leyenda
 
     d3.select("#filter-reset").on("click", function() {
         // delete everything in SVG1
@@ -235,6 +201,8 @@ function mostrar_grafico(data_1){
 
         // call itself again to reset the filter
         mostrar_grafico(data_1);});
+
+
 }
 
 
@@ -325,6 +293,12 @@ function nodo_enlace(data, jugadas, elo, data_1, new_data, colorDict){
 
     datasets.forEach(dataset => {
         let regionGroup = svg.select(".region-" + dataset.move);
+
+        if (new_data)
+        {
+            regionGroup.selectAll("*").remove();
+        }
+
         // Idea de las simulaciones: https://d3-graph-gallery.com/graph/network_basic.html
     
         let simulation = d3.forceSimulation(dataset.nodes)
