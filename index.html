@@ -7,19 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.js"></script>
-    <title>T02</title>
+    <title>Proyecto Final</title>
 </head>
 
 <body>
     <div class="container">
         <h1>Ajedrez</h1>
 
+        Esta visualización muestra las aperturas más comunes en Ajedrez según Elo, y primera jugada.
+        Cada barra representa un intervalo de Elo de 100 puntos, y cada color representa una apertura.
+        
+        <br> 
+        Al hacer click en una barra, se muestra un gráfico de nodo-enlace en la segunda visualización correspondiente a las aperturas seleccionadas.
+
         <h2>Visualización 1 - Primera jugada</h2>
         <div>
-            <h5>Filtrar por elo</h5>
-            <button id="filter-button">Sobre 2000 de elo</button>
-            <button id="filter-button2">Bajo 2000 de elo</button>
-            <button id="filter-reset">Todos</button>
+            <button id="filter-reset">Reset</button>
         </div>
         
         <br>
@@ -27,12 +30,33 @@
         <div id="vis-1">
         </div>
 
-        <h2>Visualización 2</h2>
+        <h2>Visualización 2 - Aperturas más comunes por primera jugada y Elo</h2>
+
+        <p>Cada nodo principal representa una primera jugada, su tamaño es proporcional a la popularidad de esa jugada en el rango de Elo seleccionado.
+            <br>
+            Los nodos secundarios representan las aperturas más comunes para esa primera jugada, su tamaño es proporcional a la popularidad de esa apertura.
+            <br>
+            Se puede hacer click en los nodos secundarios para mostrar las variantes de esa apartura en la tercera visualización.
+        </p>
+
         <div id="vis-2">
+            <h4 id="selected"></h4>
         </div>
-        <h2>Visualización 3</h2>
+
+        <h2>Visualización 3 - Tablero de ajedréz con la apertura y sus variantes</h2>
+        <p>
+            Al seleccionar una variante en el menú dropdown, se muestra un tablero de ajedréz con la posición final de esa variante.
+        </p>
+        
+        <div>
+            <h4>Variante</h4>
+            <select id="variante">
+            </select>
+        </div>
+
         <div id="vis-3">
         </div>
+
     </div>
     <script src="main.js"></script>
     <script src="configuration.js"></script>
